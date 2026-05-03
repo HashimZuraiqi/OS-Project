@@ -1,148 +1,103 @@
-# First-Come First-Served (FCFS) – Non-Preemptive
+# First-Come First-Served (FCFS) – CPU Scheduling Algorithm
 
-**Student:** Faris  
-**Algorithm Type:** Non-Preemptive  
-**Scheduling Policy:** Processes are executed in the order they arrive in the ready queue
+## What is FCFS?
 
----
+First-Come First-Served (FCFS) is the simplest CPU scheduling algorithm.
+Processes are executed in the order they arrive in the ready queue.
+Once a process starts running, it runs to completion without interruption — this is what makes it **non-preemptive**.
 
-## Algorithm Description
-
-First-Come First-Served (FCFS) is the simplest CPU scheduling algorithm. The process that arrives first in the ready queue gets the CPU first. Once a process is allocated to the CPU, it executes until it completes or enters a waiting state (I/O operation). No process can be preempted.
-
-### Characteristics
-- **Non-Preemptive:** Once CPU is allocated, it cannot be taken away until the process completes
-- **Fair & Simple:** Easy to understand and implement
-- **Limitations:** 
-  - Suffers from the "convoy effect" (short processes wait behind long ones)
-  - Average waiting time can be very high
-  - Not suitable for interactive systems
+### Key Metrics
+| Metric | Formula |
+|---|---|
+| Completion Time | Time when the process finishes execution |
+| Turnaround Time | Completion Time − Arrival Time |
+| Waiting Time | Turnaround Time − Burst Time |
 
 ---
 
-## Implementation Guidelines
-
-### Requirements
-1. Implement a queue data structure to manage processes in FIFO order
-2. Track the following for each process:
-   - Process ID
-   - Arrival Time
-   - Burst Time (CPU execution time)
-   - Completion Time
-   - Turnaround Time = Completion Time - Arrival Time
-   - Waiting Time = Turnaround Time - Burst Time
-
-### Pseudocode
-
-```
-FCFS_Schedule(processes):
-    ready_queue = []
-    current_time = 0
-    
-    for each process in processes (sorted by arrival time):
-        add process to ready_queue
-    
-    while ready_queue is not empty:
-        process = dequeue from ready_queue
-        
-        if current_time < process.arrival_time:
-            current_time = process.arrival_time
-        
-        process.start_time = current_time
-        current_time += process.burst_time
-        process.completion_time = current_time
-        
-        calculate turnaround_time and waiting_time
-        store results
-```
-
----
-
-## Folder Structure
+## Files
 
 ```
 faris/fcfs/
-├── README.md                    # This file
-├── code/
-│   ├── fcfs.cpp                # C++ implementation
-│   ├── fcfs.py                 # Python implementation (optional)
-│   └── input_processes.txt      # Test input file
-└── results/
-    ├── output.txt              # Algorithm output
-    └── metrics.txt             # Performance metrics
+├── README.md       ← You are here
+└── code/
+    └── fcfs.cpp    ← FCFS implementation in C++
 ```
 
 ---
 
-## Running the Program
+## Requirements
 
-### Prerequisites
-- [Your chosen language compiler/interpreter]
-- Standard C++ Library / Python 3.x
+- A C++ compiler (g++ recommended)
+- Works on Windows, Linux, and macOS
 
-### Compilation/Execution
+---
 
-**For C++ (example):**
+## How to Compile and Run
+
+### Linux / macOS
+Open a terminal in the `faris/fcfs/code/` directory and run:
+
 ```bash
-cd faris/fcfs/code
 g++ -o fcfs fcfs.cpp
-./fcfs input_processes.txt
+./fcfs
 ```
 
-**For Python (example):**
+### Windows
+Open Command Prompt in the `faris/fcfs/code/` directory and run:
+
 ```bash
-cd faris/fcfs/code
-python fcfs.py input_processes.txt
+g++ -o fcfs.exe fcfs.cpp
+fcfs.exe
 ```
 
 ---
 
-## Input Format
+## Expected Output
 
-Create `input_processes.txt` with the following format:
+For each test case the program prints:
+1. A **Gantt Chart** showing the execution timeline (including idle gaps)
+2. A **Results Table** with Completion Time, Turnaround Time, and Waiting Time per process
+3. **Average Turnaround Time** and **Average Waiting Time**
+
+Example output for Test Case 4:
+
 ```
-Process_ID Arrival_Time Burst_Time
-P1 0 5
-P2 1 3
-P3 2 8
-P4 3 6
+--- Gantt Chart ---
+ +----------+----------+----------+----------+----------+
+ |  P1      |  IDLE    |  P2      |  IDLE    |  P3      |
+ +----------+----------+----------+----------+----------+
+ 0          4          10         13         15         20
+
+--- FCFS Scheduling Results ---
+Process Arrival Time  Burst Time  Completion Time   Turnaround Time   Waiting Time
+------------------------------------------------------------------------------------
+P1      0             4           4                 4                 0
+P2      10            3           13                3                 0
+P3      15            5           20                5                 0
+------------------------------------------------------------------------------------
+
+Average Turnaround Time : 4.00 ms
+Average Waiting Time    : 0.00 ms
 ```
 
 ---
 
-## Output Format
+## Test Cases
 
-Your program should produce output in this format:
-```
-Process | Arrival Time | Burst Time | Completion Time | Turnaround Time | Waiting Time
-P1      | 0            | 5          | 5               | 5               | 0
-P2      | 1            | 3          | 8               | 7               | 4
-...
+The program includes 4 hardcoded test cases, each demonstrating a different scenario:
 
-Average Turnaround Time: X.XX
-Average Waiting Time: X.XX
-```
-
----
-
-## Testing
-
-Create multiple test cases with:
-- Processes arriving in different orders
-- Varying burst times
-- Different number of processes (minimum 5 test cases)
-
----
-
-## References
-
-1. Silberschatz, A., Galvin, P., & Gagne, G. (2018). *Operating System Concepts* (10th ed.). Wiley.
-2. [Operating System Scheduling](https://en.wikipedia.org/wiki/Scheduling_(computing))
+| # | Description | Purpose |
+|---|---|---|
+| 1 | All processes arrive at time 0 | Baseline — no idle time, pure ordering |
+| 2 | Staggered arrival times | Shows how waiting time builds with back-to-back processes |
+| 3 | Convoy effect | One long process blocks several short ones |
+| 4 | CPU idle gaps | Processes arrive late, CPU sits idle between them |
 
 ---
 
 ## Notes
 
-- Document your code with comments explaining the logic
-- Include a brief explanation of how FCFS handles the test cases
-- Prepare to discuss the convoy effect in your results
+- Processes are sorted by arrival time before scheduling begins.
+- If two processes have the same arrival time, they are scheduled in the order they appear in the code.
+- The Gantt chart explicitly shows **IDLE** periods where the CPU is waiting for the next process to arrive.
