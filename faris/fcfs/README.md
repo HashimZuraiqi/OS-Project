@@ -53,6 +53,30 @@ fcfs.exe
 
 ---
 
+## Usage
+
+When the program starts, it will ask you to choose a mode:
+
+```
+Enter 1 to input your own processes, or 2 for hardcoded test cases:
+```
+
+### Option 1 – Custom Input
+Enter your own processes at runtime. The program will ask for the number of processes, then for each process enter its **ID**, **Arrival Time**, and **Burst Time** separated by spaces.
+
+Example:
+```
+Enter the number of processes: 3
+Enter Process ID, Arrival Time, and Burst Time for Process 1: P1 0 5
+Enter Process ID, Arrival Time, and Burst Time for Process 2: P2 2 3
+Enter Process ID, Arrival Time, and Burst Time for Process 3: P3 4 8
+```
+
+### Option 2 – Hardcoded Test Cases
+Runs 4 predefined test cases automatically. See the Test Cases section below for details.
+
+---
+
 ## Expected Output
 
 For each test case the program prints:
@@ -85,7 +109,7 @@ Average Waiting Time    : 0.00 ms
 
 ## Test Cases
 
-The program includes 4 hardcoded test cases, each demonstrating a different scenario:
+The program includes 4 hardcoded test cases (Option 2), each demonstrating a different scenario:
 
 | # | Description | Purpose |
 |---|---|---|
@@ -99,5 +123,6 @@ The program includes 4 hardcoded test cases, each demonstrating a different scen
 ## Notes
 
 - Processes are sorted by arrival time before scheduling begins.
-- If two processes have the same arrival time, they are scheduled in the order they appear in the code.
+- If two processes have the same arrival time, they are scheduled in the order they were entered.
 - The Gantt chart explicitly shows **IDLE** periods where the CPU is waiting for the next process to arrive.
+- If an invalid option is entered (not 1 or 2), the program will display an error message and exit.

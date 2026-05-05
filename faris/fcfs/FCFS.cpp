@@ -160,7 +160,24 @@ int main() {
     cout << "   First-Come First-Served (FCFS) CPU Scheduling Algorithm  \n";
     cout << "   Non-Preemptive                                           \n";
     cout << "============================================================\n";
+    cout << "Hello user, if you want to use ur own input for testing the algorothim please enter 1, else (Hardcoded test cases) enter 2: " <<endl;
 
+    int choice;
+    cin >> choice;
+
+    if (choice == 1) {
+        int n;
+        cout << "Enter the number of processes: ";
+        cin >> n;
+
+        vector<Process> userProcesses(n);
+        for (int i = 0; i < n; ++i) {
+            cout << "Enter Process ID, Arrival Time, and Burst Time for Process " << (i + 1) << ": ";
+            cin >> userProcesses[i].id >> userProcesses[i].arrivalTime >> userProcesses[i].burstTime;
+        }
+
+        runTestCase(0, "User Input Test Case", userProcesses);
+    } else if (choice == 2) {
     //Test Case 1: All processes arrive at time 0
     //Classic scenario: no idle time, pure burst-time execution order
     {
@@ -209,10 +226,14 @@ int main() {
         };
         runTestCase(4, "CPU idle gaps between arrivals", tc4);
     }
-
+  }
+  else {
+        cout << "Invalid choice. Please run the program again and enter 1 or 2 \n";
+    }
     cout << "\n============================================================\n";
     cout << "   End of FCFS Simulation\n";
     cout << "============================================================\n";
-
+    
     return 0;
+    
 }
