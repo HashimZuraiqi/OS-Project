@@ -23,7 +23,6 @@
 
 using namespace std;
 
-//Data structure representing a single process
 struct Process {
     string id;           // Process identifier
     int    arrivalTime;  // Time the process enters the ready queue
@@ -50,19 +49,18 @@ void fcfsSchedule(vector<Process>& processes) {
         }
 
         //Run the process to completion (non-preemptive)
-        currentTime        += p.burstTime;
-        p.completionTime    = currentTime;
-        p.turnaroundTime    = p.completionTime - p.arrivalTime;
-        p.waitingTime       = p.turnaroundTime - p.burstTime;
+        currentTime+= p.burstTime;
+        p.completionTime = currentTime;
+        p.turnaroundTime = p.completionTime - p.arrivalTime;
+        p.waitingTime = p.turnaroundTime - p.burstTime;
     }
 }
 
 //Print a Gantt Chart (Not required but for better visualization)
 void printGanttChart(const vector<Process>& processes) {
-    cout << "\n--- Gantt Chart ---\n";
+    cout << "\nGantt Chart\n";
 
     // Build a list of segments: each segment is either a process or an IDLE gap
-    // A segment has a label, a start time, and an end time
     struct Segment {
         string label;
         int    start;
@@ -72,7 +70,7 @@ void printGanttChart(const vector<Process>& processes) {
 
     int clock = 0;
     for (const auto& p : processes) {
-        // If there's a gap between the clock and this process's arrival → IDLE
+        // If there's a gap between the clock and this process's arrival => IDLE
         if (clock < p.arrivalTime) {
             segments.push_back({"IDLE", clock, p.arrivalTime});
             clock = p.arrivalTime;
@@ -104,7 +102,6 @@ void printGanttChart(const vector<Process>& processes) {
     cout << " ";
     for (const auto& s : segments)
         cout << setw(11) << left << s.start;
-    // Print the final end time of the last segment
     cout << segments.back().end << "\n";
 }
 
@@ -154,13 +151,11 @@ void runTestCase(int caseNum, const string& description, vector<Process> process
     printResults(processes);
 }
 
-//Main
 int main() {
     cout << "============================================================\n";
     cout << "   First-Come First-Served (FCFS) CPU Scheduling Algorithm  \n";
-    cout << "   Non-Preemptive                                           \n";
     cout << "============================================================\n";
-    cout << "Hello user, if you want to use ur own input for testing the algorothim please enter 1, else (Hardcoded test cases) enter 2: " <<endl;
+    cout << "Hello user, if you want to use ur own input for testing the algorothim please enter 1, else (Hardcoded test cases) enter 2: " << endl;
 
     int choice;
     cin >> choice;
@@ -228,12 +223,8 @@ int main() {
     }
   }
   else {
-        cout << "Invalid choice. Please run the program again and enter 1 or 2 \n";
+        cout << "Invalid choice. Please run the program again and either enter 1 or 2 \n";
     }
-    cout << "\n============================================================\n";
-    cout << "   End of FCFS Simulation\n";
-    cout << "============================================================\n";
-    
+    cout << "End of FCFS Simulation\n";
     return 0;
-    
 }
