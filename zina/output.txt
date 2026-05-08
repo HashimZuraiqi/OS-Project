@@ -1,0 +1,7 @@
+
+SJF Scheduling Result:
+Process	Arrival	Burst	Completion	Turnaround	Waiting
+P1	0	8	8		8		0
+P4	3	1	9		6		5
+P3	2	2	11		9		7
+P2	1	4	15		14		10
