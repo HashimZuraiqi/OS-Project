@@ -46,25 +46,25 @@
 
 ### 3.1 Statement of Purpose
 
-The purpose of this project is to implement and conduct a formal performance evaluation of five core CPU scheduling algorithms: First-Come, First-Served (FCFS), Shortest Job First (SJF), Shortest Remaining Time First (SRTF), non-preemptive Priority Scheduling, and Round Robin (RR). By simulating all five algorithms in C++ under identical, standardized workloads, this study aims to quantitatively measure and compare their efficiency in terms of average turnaround time and average waiting time. The overarching goal is to identify the trade-offs between algorithmic simplicity, system throughput, process fairness, and responsiveness, so that informed recommendations can be made for different classes of computing environments.
+The purpose of this project is to implement five CPU scheduling algorithms and compare their performance in C++. The algorithms are First-Come, First-Served (FCFS), Shortest Job First (SJF), Shortest Remaining Time First (SRTF), non-preemptive Priority Scheduling, and Round Robin (RR). We use the same process sets for all algorithms so the comparison is fair. The main goal is to compare average waiting time and average turnaround time and show which algorithm works better in each case.
 
 ### 3.2 Background
 
-CPU scheduling is one of the most fundamental responsibilities of an operating system. When multiple processes compete for a single CPU, the scheduler determines which process receives CPU time and for how long. The selection strategy has a direct and measurable impact on system performance, user experience, and resource utilization [1]. Poor scheduling can lead to excessive waiting, low CPU utilization, or unfair treatment of certain processes—problems that become critically visible in real-time, interactive, and batch-processing systems alike.
+CPU scheduling is one of the main jobs of an operating system. When many processes want the CPU at the same time, the scheduler decides which one runs first and for how long. This decision affects system performance, waiting time, fairness, and how fast the system responds to users [1]. If scheduling is poor, some processes may wait too long, the CPU may be used badly, or some processes may be treated unfairly.
 
-The five algorithms studied in this report represent the foundational spectrum of scheduling strategies: from the simplest non-preemptive queue (FCFS) to dynamic preemptive policies (SRTF and RR). Each algorithm embodies a different design philosophy, and no single algorithm is universally optimal. Understanding when each excels and where each falls short is therefore essential knowledge in operating systems design [1][2].
+The five algorithms in this report cover the basic types of CPU scheduling, from the simplest queue in FCFS to the preemptive methods in SRTF and RR. Each algorithm has its own idea of how the CPU should be shared. No single algorithm is best in every situation, so it is important to understand the strengths and weaknesses of each one [1][2].
 
-All five algorithms were implemented from scratch in C++ and tested against a common set of process workloads to enable a direct, fair comparison.
+All five algorithms were written from scratch in C++ and tested using the same workloads to make the comparison direct and fair.
 
-### 1.3 Evaluation Metrics
+### 3.3 Evaluation Metrics
 
-The following standard metrics are used throughout this report to evaluate scheduler performance:
+This report uses the following metrics to measure scheduler performance:
 
-- **Waiting Time (WT):** The total time a process spends in the ready queue waiting for the CPU. Calculated as: `WT = Turnaround Time − Burst Time`
-- **Turnaround Time (TAT):** The total elapsed time from process submission to process completion. Calculated as: `TAT = Completion Time − Arrival Time`
-- **Average Waiting Time (AWT):** The arithmetic mean of waiting times across all processes. Lower AWT indicates better scheduling efficiency.
-- **Average Turnaround Time (ATAT):** The arithmetic mean of turnaround times across all processes. Lower ATAT indicates faster overall process throughput.
-- **Context Switches:** For preemptive algorithms, the number of times the CPU switches from one process to another. Frequent context switching increases scheduling overhead.
+- **Waiting Time (WT):** The time a process spends waiting in the ready queue. Formula: `WT = Turnaround Time − Burst Time`
+- **Turnaround Time (TAT):** The total time from arrival until completion. Formula: `TAT = Completion Time − Arrival Time`
+- **Average Waiting Time (AWT):** The average of all waiting times. A lower value is better.
+- **Average Turnaround Time (ATAT):** The average of all turnaround times. A lower value is better.
+- **Context Switches:** The number of times the CPU changes from one process to another. More context switches usually mean more overhead.
 
 ---
 
@@ -73,7 +73,7 @@ The following standard metrics are used throughout this report to evaluate sched
 ### 4.1 First-Come, First-Served (FCFS) — Non-Preemptive
 **Implemented by:** Faris Asaad
 
-**Definition:** FCFS is the simplest CPU scheduling algorithm. Processes are placed in a FIFO (First-In, First-Out) ready queue and are executed strictly in the order in which they arrive. Once a process starts executing, it continues until it completes—there is no preemption.
+**Definition:** FCFS is the simplest CPU scheduling algorithm. Processes wait in a FIFO ready queue and run in the same order they arrive. Once a process starts, it keeps the CPU until it finishes, so there is no preemption.
 
 **Algorithm Pseudocode:**
 ```
@@ -89,21 +89,21 @@ For each process p in arrival order:
 ```
 
 **Advantages:**
-- Extremely simple to understand and implement.
-- Zero preemption overhead; no context switches during execution.
-- Fair in the sense that every process eventually gets the CPU.
+- Very easy to understand and implement.
+- No preemption overhead during execution.
+- Every process will eventually get the CPU.
 
 **Disadvantages:**
-- Suffers severely from the **Convoy Effect**: a single long-burst process blocks all shorter processes behind it, dramatically inflating their waiting times.
-- Average waiting time is highly sensitive to arrival order and can be very large.
-- Not suitable for interactive or time-sharing systems where responsiveness matters.
+- It suffers from the **Convoy Effect**, where one long process blocks the shorter ones behind it.
+- The average waiting time can become very high depending on the arrival order.
+- It is not a good choice for interactive or time-sharing systems.
 
 ---
 
 ### 4.2 Shortest Job First (SJF) — Non-Preemptive
 **Implemented by:** Zina Hijazeen
 
-**Definition:** At each scheduling decision point (when the CPU becomes free), SJF selects the process from the ready queue with the smallest CPU burst time. If two processes have equal burst times, the one that arrived earlier is chosen. Once selected, the process runs to completion without preemption.
+**Definition:** At each scheduling decision point, SJF chooses the ready process with the smallest CPU burst time. If two processes have the same burst time, the one that arrived earlier is chosen. After selection, the process runs until it finishes with no preemption.
 
 **Algorithm Pseudocode:**
 ```
@@ -121,21 +121,21 @@ while uncompleted processes exist:
 ```
 
 **Advantages:**
-- **Provably optimal** for minimizing average waiting time among non-preemptive algorithms for any given set of processes [1].
-- Significantly reduces the convoy effect by always selecting short jobs when available.
-- Simple to implement once burst times are known.
+- It gives the best average waiting time among non-preemptive algorithms for a fixed set of processes [1].
+- It reduces the convoy effect by running the shortest job first.
+- It is simple to implement when burst times are known.
 
 **Disadvantages:**
-- **Starvation risk:** Long processes may wait indefinitely if short processes keep arriving.
-- Requires prior knowledge of burst times, which is generally unavailable in real-world systems. In practice, burst time must be estimated (e.g., using exponential averaging of past behavior).
-- Non-preemptive: a long process that starts when no other is ready will still block shorter processes that arrive later.
+- Long processes may suffer from starvation if short processes keep coming.
+- It needs burst-time knowledge, which is usually not known exactly in real systems. In practice, it must be estimated.
+- It is non-preemptive, so a long process that starts first will block later short processes.
 
 ---
 
 ### 4.3 Shortest Remaining Time First (SRTF) — Preemptive
 **Implemented by:** Hashim Zuraiqi
 
-**Definition:** SRTF is the preemptive counterpart of SJF. At every moment a new process arrives, the scheduler compares that process's burst time with the remaining burst time of the currently running process. If the new process has a shorter remaining time, the current process is immediately preempted and placed back in the ready queue. The algorithm then runs the process with the globally shortest remaining time.
+**Definition:** SRTF is the preemptive version of SJF. When a new process arrives, the scheduler compares its burst time with the remaining time of the running process. If the new process has a shorter remaining time, the running process is stopped and returned to the ready queue. Then the process with the shortest remaining time runs.
 
 **Algorithm Pseudocode:**
 ```
@@ -152,21 +152,21 @@ while completed < n:
 ```
 
 **Advantages:**
-- Minimizes average waiting time among all preemptive algorithms—a direct extension of SJF's optimality to dynamic environments.
-- Highly responsive to newly arriving short jobs; they are serviced almost immediately.
-- Excellent throughput in systems with mixed short and long processes.
+- It usually gives the lowest average waiting time among preemptive algorithms.
+- Short new jobs are handled very quickly.
+- It works well when short and long processes are mixed together.
 
 **Disadvantages:**
-- **High context-switching overhead:** The scheduler checks remaining times at every time unit, which is computationally expensive.
-- Long processes can suffer severe starvation in workloads with continuous short-job arrivals.
-- Like SJF, requires knowledge of burst times, which must be estimated in practice.
+- It can cause high context-switching overhead because the scheduler checks the remaining time often.
+- Long processes may starve if short processes keep arriving.
+- Like SJF, it needs burst-time estimates.
 
 ---
 
 ### 4.4 Priority Scheduling — Non-Preemptive
 **Implemented by:** Mohammad Amayreh
 
-**Definition:** Each process is assigned an integer priority. In our implementation, a **lower integer value corresponds to higher priority** (priority 1 is the highest). When the CPU becomes free, the scheduler selects the highest-priority process from all arrived, ready processes. Ties in priority are broken by arrival time. Once a process starts, it runs to completion.
+**Definition:** Each process has an integer priority. In our implementation, a **lower number means higher priority** (priority 1 is the highest). When the CPU becomes free, the scheduler chooses the highest-priority process from the arrived ready processes. If two processes have the same priority, the earlier arrival is chosen. Once a process starts, it runs until it finishes.
 
 **Algorithm Pseudocode:**
 ```
@@ -184,21 +184,21 @@ while uncompleted processes exist:
 ```
 
 **Advantages:**
-- Allows the OS to prioritize critical system processes and time-sensitive tasks over background jobs.
-- Simple to implement and reason about in systems with well-defined priority levels.
-- Flexible: priority can encode real-world importance (e.g., I/O-bound vs. CPU-bound).
+- It lets the OS run important or urgent processes first.
+- It is simple to understand and implement.
+- The priority value can represent real system importance.
 
 **Disadvantages:**
-- **Starvation:** Low-priority processes may never execute if high-priority processes keep arriving. This is mitigated in practice using **aging**, where priority gradually increases the longer a process waits.
-- Priority assignment can be arbitrary; incorrect priorities lead to poor system behavior.
-- Like FCFS, the non-preemptive variant cannot interrupt a running low-priority process even when a high-priority process arrives.
+- Low-priority processes may starve if higher-priority processes keep coming. A common fix is **aging**, which slowly increases a waiting process's priority.
+- Wrong priority values can give poor results.
+- Like FCFS, the non-preemptive version cannot stop a running process.
 
 ---
 
 ### 4.5 Round Robin (RR) — Preemptive
 **Implemented by:** Nour Al-Qatarneh
 
-**Definition:** Round Robin assigns each process a fixed, maximum unit of CPU time called the **Time Quantum** (Q). The scheduler maintains a FIFO ready queue. A process runs for at most Q time units; if it does not finish, it is preempted and added to the end of the ready queue. New processes that arrive during a running quantum are enqueued before the preempted process. This continues until all processes complete.
+**Definition:** Round Robin gives each process a fixed CPU time called the **Time Quantum** (Q). The scheduler keeps a FIFO ready queue. A process runs for at most Q time units. If it does not finish, it is stopped and placed at the end of the queue. New arriving processes are added to the queue in arrival order. This continues until all processes finish.
 
 **Algorithm Pseudocode:**
 ```
@@ -214,20 +214,20 @@ while queue not empty or processes remaining:
 ```
 
 **Advantages:**
-- **Fairness:** Every process is guaranteed CPU time within a bounded wait of (n-1)×Q time units.
-- No starvation: every process eventually reaches the front of the queue.
-- Excellent for interactive and time-sharing systems; provides good response times for short processes.
+- It is fair because every process gets CPU time in turn.
+- It does not cause starvation.
+- It works well in interactive and time-sharing systems because response time is good.
 
 **Disadvantages:**
-- **Performance depends critically on the time quantum.** A very small Q causes excessive context switching; a very large Q degenerates to FCFS behavior.
-- Context-switching overhead is inherently higher than non-preemptive algorithms.
-- Average turnaround time is often worse than SJF because short processes are interrupted repeatedly.
+- Its performance depends a lot on the time quantum. A very small Q causes many context switches, while a very large Q behaves like FCFS.
+- It has more context-switching overhead than non-preemptive algorithms.
+- Its average turnaround time is often worse than SJF because processes are interrupted many times.
 
 ---
 
 ## 5. Results
 
-All five algorithms were evaluated using two standardized test cases. Each test case was run with identical process sets across all algorithms to ensure a fair comparison.
+All five algorithms were tested using two standard test cases. The same process set was used for all algorithms in each case so the comparison stayed fair.
 
 ### 5.1 Test Case 1: Simple Varied Workload
 
@@ -240,7 +240,7 @@ All five algorithms were evaluated using two standardized test cases. Each test 
 | P3 | 2 | 5 | 4 (Lowest) |
 | P4 | 3 | 3 | 2 |
 
-*Note: Round Robin uses Time Quantum = 2 ms. Priority: lower number = higher priority.*
+*Note: Round Robin uses Time Quantum = 2 ms. In Priority Scheduling, a lower number means a higher priority.*
 
 ---
 
@@ -290,7 +290,7 @@ P1 monopolizes the CPU for the first 10 ms, forcing all subsequent processes to 
 
 **AWT = 8.50 ms | ATAT = 14.00 ms | Context Switches = 0**
 
-At t=10 all three remaining processes have arrived. SJF selects P4 (shortest burst = 3), then P2 (burst = 4), then P3 (burst = 5). This reordering reduces AWT by 8% compared to FCFS.
+At t=10, all the remaining processes are ready. SJF chooses P4 first because it has the shortest burst, then P2, then P3. This gives a lower waiting time than FCFS.
 
 ---
 
@@ -315,7 +315,7 @@ At t=10 all three remaining processes have arrived. SJF selects P4 (shortest bur
 
 **AWT = 5.00 ms | ATAT = 10.50 ms | Context Switches = 1**
 
-At t=1, P2 arrives with burst 4 < P1's remaining 9, so P1 is preempted. From t=1, SRTF always runs the globally shortest remaining job. Only one preemption occurs; all other transitions happen at natural completions.
+At t=1, P2 arrives with burst 4, which is shorter than P1's remaining 9, so P1 is stopped. After that, SRTF always runs the process with the shortest remaining time. Only one preemption happens.
 
 ---
 
@@ -340,7 +340,7 @@ At t=1, P2 arrives with burst 4 < P1's remaining 9, so P1 is preempted. From t=1
 
 **AWT = 8.75 ms | ATAT = 14.25 ms | Context Switches = 0**
 
-P1 runs first (only arrived process). At t=10, priority ordering selects P2 (priority 1), then P4 (priority 2), then P3 (priority 4). The result is similar to SJF in structure but driven by assigned priority rather than burst length.
+P1 runs first because it is the only process ready at t=0. At t=10, the scheduler chooses P2 first, then P4, then P3 based on priority. The order is similar to SJF, but it depends on priority values, not burst time.
 
 ---
 
@@ -380,13 +380,13 @@ P1 runs first (only arrived process). At t=10, priority ordering selects P2 (pri
 
 **AWT = 10.25 ms | ATAT = 15.75 ms | Context Switches = 10**
 
-RR distributes the CPU among all processes in small slices. While this guarantees fairness and no starvation, the frequent context switching and the repeated interruption of P1 result in the highest AWT and ATAT among all algorithms for this workload.
+RR gives the CPU to each process in small time slices. This makes it fair and avoids starvation, but the many context switches and repeated stops of P1 increase waiting time and turnaround time.
 
 ---
 
 ### 5.2 Test Case 2: Convoy Effect Scenario
 
-This test case is designed to expose how each algorithm handles a single long-burst process blocking many short ones.
+This test case shows how each algorithm handles one long process that blocks many short ones.
 
 **Process Set:**
 
@@ -401,7 +401,7 @@ This test case is designed to expose how each algorithm handles a single long-bu
 
 #### FCFS – Test Case 2
 
-P1 occupies the CPU for 25 ms. P2, P3, and P4 each wait the entire 25 ms before even starting.
+P1 uses the CPU for 25 ms. P2, P3, and P4 each wait almost the full 25 ms before they get a turn.
 
 | Process | Arrival | Burst | Completion | TAT | WT |
 |:---:|:---:|:---:|:---:|:---:|:---:|
@@ -414,7 +414,7 @@ P1 occupies the CPU for 25 ms. P2, P3, and P4 each wait the entire 25 ms before 
 
 #### SJF – Test Case 2
 
-At t=0, P1 is the only arrived process, so SJF must start it. By the time P1 finishes at t=25, all short processes are ready—but they have already waited 24–22 ms. SJF provides no benefit here because the long process was unavoidable.
+At t=0, P1 is the only process that has arrived, so SJF must start it. By the time P1 finishes at t=25, the short processes are already waiting, and their waiting times are still very high. SJF gives no benefit here because P1 had to run first.
 
 | Process | Arrival | Burst | Completion | TAT | WT |
 |:---:|:---:|:---:|:---:|:---:|:---:|
@@ -427,7 +427,7 @@ At t=0, P1 is the only arrived process, so SJF must start it. By the time P1 fin
 
 #### Priority Scheduling – Test Case 2
 
-Same as SJF and FCFS for this workload: P1 (priority 3) is the only available process at t=0 and must run non-preemptively to completion. Priority ordering takes effect at t=25.
+For this workload, Priority Scheduling behaves like FCFS and SJF. P1 is the only process available at t=0, so it runs to completion first. The priority order only starts after t=25.
 
 | Process | Arrival | Burst | Priority | Completion | TAT | WT |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
@@ -440,7 +440,7 @@ Same as SJF and FCFS for this workload: P1 (priority 3) is the only available pr
 
 #### SRTF – Test Case 2
 
-At t=1, P2 arrives with burst 2 vs. P1's remaining 24. SRTF immediately preempts P1 and runs P2 through P4 before returning to P1. The short processes complete in just 3–5 ms.
+At t=1, P2 arrives with burst 2 while P1 still has 24 ms left. SRTF stops P1 right away and runs the short processes before returning to P1. The short processes finish very quickly.
 
 **Gantt Chart:**
 ```
@@ -461,7 +461,7 @@ At t=1, P2 arrives with burst 2 vs. P1's remaining 24. SRTF immediately preempts
 
 #### Round Robin – Test Case 2 (Q = 2 ms)
 
-RR allows P2, P3, and P4 to be serviced almost immediately by interleaving with P1's long burst.
+RR lets P2, P3, and P4 get CPU time quickly by alternating them with P1's long burst.
 
 | Process | Arrival | Burst | Completion | TAT | WT |
 |:---:|:---:|:---:|:---:|:---:|:---:|
@@ -510,57 +510,57 @@ Ordering by Average Waiting Time from best to worst:
 4. **FCFS** — 9.25 ms
 5. **Round Robin** — 10.25 ms (worst for this workload)
 
-SRTF achieves the lowest AWT by dynamically preempting P1 the moment P2 arrives, ensuring short jobs are never blocked behind long ones. The single preemption (P1 → P2 at t=1) enables P2, P4, and P3 to complete rapidly while P1 waits. This result aligns with the theoretical proof that SRTF minimizes average waiting time in dynamic environments [1].
+SRTF gets the lowest AWT because it stops P1 as soon as P2 arrives. This keeps short jobs from waiting behind the long one. The single preemption lets P2, P4, and P3 finish quickly while P1 waits. This matches the theory that SRTF gives very low average waiting time in dynamic workloads [1].
 
-SJF ranks second. It cannot improve on the first scheduling decision (P1 runs at t=0 because it is alone), but once P1 completes, it correctly prioritizes P4 over P2 and P3. The 8% improvement in AWT over FCFS (9.25 → 8.50 ms) illustrates the value of shortest-job prioritization even in non-preemptive form.
+SJF comes second. It cannot improve the first choice because P1 is alone at t=0, but after that it picks the shortest available job first. Its AWT is still better than FCFS, which shows that shortest-job selection helps even without preemption.
 
 ### 6.2 The Convoy Effect
 
-Test Case 2 provides a controlled demonstration of the convoy effect. When a 25 ms process (P1) occupies the CPU at t=0 under FCFS, SJF, or non-preemptive Priority Scheduling, all three short processes (2 ms each) are forced to wait approximately 24 ms before their first execution. All three non-preemptive algorithms produce identical results (AWT = 18.75 ms) because none can interrupt P1 once it starts.
+Test Case 2 gives a clear example of the convoy effect. When the 25 ms process P1 starts at t=0 under FCFS, SJF, or non-preemptive Priority Scheduling, the three short processes must wait almost the full 25 ms before they run. All three non-preemptive algorithms give the same result because none of them can stop P1 once it starts.
 
-SRTF eliminates the convoy effect almost entirely: it preempts P1 at t=1 when P2 arrives, reducing AWT from 18.75 ms to 2.25 ms—an **88% reduction**. Round Robin also handles the convoy effect well, limiting P1's uninterrupted run to only 2 ms before yielding to other processes, yielding AWT = 3.50 ms.
+SRTF almost removes the convoy effect. It stops P1 at t=1 when P2 arrives and reduces AWT from 18.75 ms to 2.25 ms, which is an **88% reduction**. Round Robin also handles the convoy effect well because P1 only runs for 2 ms before the CPU moves to other processes.
 
-This experiment reveals that preemption is the key differentiator for convoy-effect scenarios. Non-preemptive algorithms (FCFS, SJF, Priority) offer no protection against a single long-burst process; only SRTF and RR can mitigate it.
+This experiment shows that preemption is the key factor in convoy-effect cases. Non-preemptive algorithms (FCFS, SJF, and Priority) cannot protect short jobs from one long process. Only SRTF and RR can reduce the problem.
 
 ### 6.3 Round Robin and the Time Quantum Trade-off
 
-In Test Case 1, Round Robin performs worst in AWT (10.25 ms) and ATAT (15.75 ms), despite being preemptive. This counterintuitive result arises because:
+In Test Case 1, Round Robin gives the worst AWT (10.25 ms) and ATAT (15.75 ms), even though it is preemptive. This happens because:
 
-1. The workload contains one very long process (P1 = 10 ms) that is repeatedly interrupted, causing it to run in six separate segments over 22 ms instead of completing quickly.
-2. The quantum (Q=2) is small relative to the burst times, generating 10 context switches and significant scheduling overhead.
-3. Shorter processes (P2, P4) are also interrupted mid-burst, delaying their completion compared to SJF.
+1. The workload has one long process (P1 = 10 ms) that gets interrupted many times, so it finishes much later than FCFS.
+2. The quantum (Q=2) is small compared to the burst times, so the scheduler makes 10 context switches and adds overhead.
+3. Short processes like P2 and P4 are also interrupted before they finish, so they complete later than they do under SJF.
 
-However, RR's advantage is **fairness and bounded waiting**. No process waits more than (n-1)×Q = 6 ms before receiving its first CPU slice. In an interactive multi-user system, this responsiveness matters far more than minimizing AWT.
+However, RR is still useful because it is fair and gives bounded waiting. No process waits more than (n-1)×Q = 6 ms before getting its first CPU slice. In an interactive system, this fast response can matter more than the lowest average waiting time.
 
-The choice of quantum is critical: a Q that is too small wastes CPU time on context switches, while a Q that is too large degenerates to FCFS. Empirical guidelines suggest Q should be larger than 80% of typical CPU bursts [1].
+The quantum choice is very important. If Q is too small, the CPU wastes time on context switches. If Q is too large, RR starts to behave like FCFS. A common guideline is to choose a quantum larger than 80% of the usual CPU burst [1].
 
 ### 6.4 Starvation and Fairness
 
-Both SJF and Priority Scheduling carry starvation risk. In SJF, a process with a very long burst time may never be scheduled if short processes continuously arrive. In Priority Scheduling, low-priority processes (e.g., P3 with priority 4 in our test) are always deferred in favor of higher-priority ones. The standard remedy is **aging**: incrementally increasing the effective priority of waiting processes over time to ensure eventual service [1].
+Both SJF and Priority Scheduling can cause starvation. In SJF, a long process may wait for a very long time if short processes keep arriving. In Priority Scheduling, low-priority processes can keep getting pushed back by higher-priority ones. A common solution is **aging**, which slowly increases the priority of waiting processes [1].
 
-FCFS and Round Robin are immune to starvation by design. FCFS guarantees service in arrival order; RR guarantees service in cyclic order. SRTF can starve long processes in adversarial workloads but is unlikely to do so in typical distributions.
+FCFS and Round Robin do not starve processes by design. FCFS serves processes in arrival order, and RR serves them in a cycle. SRTF can also starve long processes if many short ones keep arriving, but this is less common in normal workloads.
 
 ---
 
 ## 7. Conclusions
 
-This study implemented and evaluated five CPU scheduling algorithms under standardized workloads. The results support several original conclusions:
+This study implemented and evaluated five CPU scheduling algorithms using the same workloads. The results lead to the following conclusions:
 
-1. **SRTF achieves the best throughput but at a design cost.** SRTF produced the lowest AWT in both test cases (5.00 ms in TC1, 2.25 ms in TC2). It requires only one context switch in our test workloads—far fewer than Round Robin—because most transitions occur at natural completions rather than forced preemptions. However, SRTF requires burst-time knowledge and has higher per-unit-time scheduling overhead than non-preemptive algorithms.
+1. **SRTF gives the best waiting time, but it has a cost.** SRTF produced the lowest AWT in both test cases (5.00 ms in TC1 and 2.25 ms in TC2). It needed only one context switch in our workloads, which is much less than Round Robin. However, SRTF still needs burst-time estimates and has more scheduling overhead than non-preemptive algorithms.
 
-2. **Non-preemptive algorithms are indistinguishable in convoy scenarios.** FCFS, SJF, and Priority Scheduling all produced AWT = 18.75 ms in Test Case 2 because the convoy-causing process (P1) was unavoidably the only arrived process at t=0. This demonstrates that the arrival pattern—not just the algorithm—determines whether non-preemptive scheduling suffers from the convoy effect.
+2. **Non-preemptive algorithms behave the same in convoy cases.** FCFS, SJF, and Priority Scheduling all gave AWT = 18.75 ms in Test Case 2 because P1 was the only process ready at t=0. This shows that the arrival pattern is just as important as the algorithm.
 
-3. **Round Robin is the fairest but not the most efficient.** RR provided the highest AWT for our mixed workload (10.25 ms, 11% worse than FCFS) but ensured every process received CPU time within a bounded delay. Its advantage grows in workloads with many interactive processes where responsiveness is prioritized over throughput.
+3. **Round Robin is the fairest, but not the most efficient.** RR had the highest AWT in the mixed workload (10.25 ms, 11% worse than FCFS), but it still made sure every process got CPU time after a bounded delay. This is useful in interactive systems where response time matters more than throughput.
 
-4. **SJF offers the best non-preemptive performance when it can act.** In Test Case 1, SJF's AWT (8.50 ms) was 8% better than FCFS (9.25 ms) and close to Priority Scheduling (8.75 ms). SJF's limitation—requiring burst-time estimates—prevents direct deployment in most real-world schedulers, though many modern OS schedulers use variations of burst-time prediction (exponential averaging) to approximate SJF behavior.
+4. **SJF is the best non-preemptive choice when it can make a difference.** In Test Case 1, SJF's AWT (8.50 ms) was better than FCFS (9.25 ms) and close to Priority Scheduling (8.75 ms). Its main problem is that it needs burst-time estimates, so it is usually only an approximation in real systems.
 
-5. **Algorithm selection should match system requirements:**
-   - **Batch systems** (maximize throughput): SJF or SRTF
-   - **Interactive / time-sharing systems** (minimize response time): Round Robin with a well-tuned quantum
-   - **Real-time systems** (prioritize critical tasks): Priority Scheduling (preferably preemptive with aging)
-   - **Simplicity-first embedded systems**: FCFS
+5. **The right algorithm depends on the system type:**
+    - **Batch systems** that want high throughput: SJF or SRTF
+    - **Interactive or time-sharing systems** that need good response time: Round Robin with a well-chosen quantum
+    - **Real-time systems** that must prioritize important tasks: Priority Scheduling, preferably with aging
+    - **Simple embedded systems**: FCFS
 
-In summary, no single algorithm dominates in all scenarios. The most effective scheduling strategy is determined by the nature of the workload, the system's primary performance objective (throughput vs. responsiveness vs. fairness), and the operational constraints (availability of burst-time information, acceptable context-switch overhead).
+In short, no single algorithm is best in every case. The best choice depends on the workload, the main goal of the system, and the practical limits such as burst-time knowledge and context-switch overhead.
 
 ---
 
