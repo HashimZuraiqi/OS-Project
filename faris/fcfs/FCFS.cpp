@@ -32,7 +32,6 @@
             if (currentTime < p.arrivalTime) {
                 currentTime = p.arrivalTime;
             }
-    
             //Run the process to completion
             currentTime += p.burstTime;
             p.completionTime = currentTime;
@@ -41,7 +40,7 @@
         }
     }
     
-    //Print a Gantt Chart (Not required but for better visualization)
+    //Print a Gantt Chart (Not required (OPTIONAL) but for better visualization)
     void printGanttChart(const vector<Process>& processes) {
         struct Segment {
             string label;
