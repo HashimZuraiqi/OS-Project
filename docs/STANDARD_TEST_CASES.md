@@ -1,78 +1,39 @@
-# Standard Test Cases for CPU Scheduling Algorithms
+# Standard Test Cases for Performance Comparison
 
-Use these test cases to ensure consistency across all algorithm implementations.
+To ensure a fair comparison between our implemented CPU scheduling algorithms in the final report, all team members should run their code using the following standard test cases. 
 
-## Test Case 1: Basic Test
-```
-Process_ID Arrival_Time Burst_Time Priority(optional)
-P1 0 5 1
-P2 1 3 2
-P3 2 8 3
-P4 3 6 4
-P5 4 2 5
-```
+Record the **Average Waiting Time (AWT)** and **Average Turnaround Time (ATAT)** for each.
 
-## Test Case 2: Varying Burst Times
-```
-Process_ID Arrival_Time Burst_Time Priority(optional)
-P1 0 10 1
-P2 0 1 2
-P3 0 2 3
-P4 0 3 4
-P5 0 4 5
-```
+## Test Case 1: Simple Varied Workload
+Use this to fill out the main results table in the report.
 
-## Test Case 3: Sequential Arrivals
-```
-Process_ID Arrival_Time Burst_Time Priority(optional)
-P1 0 4 1
-P2 2 3 2
-P3 4 2 3
-P4 6 5 4
-P5 8 1 5
-```
+| Process | Arrival Time | Burst Time | Priority (1=High) |
+| :--- | :--- | :--- | :--- |
+| P1 | 0 | 10 | 3 |
+| P2 | 1 | 4 | 1 |
+| P3 | 2 | 5 | 4 |
+| P4 | 3 | 3 | 2 |
 
-## Test Case 4: All Arrive at Same Time
-```
-Process_ID Arrival_Time Burst_Time Priority(optional)
-P1 0 8 3
-P2 0 6 1
-P3 0 4 2
-P4 0 2 5
-P5 0 5 4
-```
+**Settings:**
+- **Round Robin:** Use Time Quantum = 2.
+- **Priority:** Use the priority values above (smaller number is higher priority).
 
-## Test Case 5: Random Arrivals
-```
-Process_ID Arrival_Time Burst_Time Priority(optional)
-P1 1 7 2
-P2 0 5 1
-P3 3 3 4
-P4 2 4 3
-P5 4 2 5
-```
+---
 
-## Notes:
-- Priority column: Use 1 = Highest, 5 = Lowest (for Priority Scheduling)
-- Time Quantum for Round Robin: Test with values 2, 4, 8
-- All time values are in arbitrary time units (can be milliseconds, quanta, etc.)
-- The burst times are realistic for CPU scheduling (typically 1-100 time units)
+## Test Case 2: Convoy Effect Scenario
+(Mainly for FCFS vs SJF/SRTF comparison)
 
-## Expected Output Template:
-```
-Test Case: X
-Algorithm: [Algorithm Name]
-[Additional Parameters: Time Quantum, Priority Scheme, etc.]
+| Process | Arrival Time | Burst Time |
+| :--- | :--- | :--- |
+| P1 | 0 | 25 |
+| P2 | 1 | 2 |
+| P3 | 2 | 2 |
+| P4 | 3 | 2 |
 
-Execution Schedule:
-Process | Arrival Time | Burst Time | Completion Time | Turnaround Time | Waiting Time
-[Results for each process]
+---
 
-Aggregate Metrics:
-Average Turnaround Time: X.XX
-Average Waiting Time: X.XX
-[Additional metrics like context switches, if applicable]
-
-Gantt Chart (optional):
-[Timeline visualization]
-```
+## Instructions for Team Members:
+1. Compile your algorithm.
+2. Run the program and input the data from **Test Case 1**.
+3. Copy the **Average Waiting Time** and **Average Turnaround Time** into our shared Results table in `docs/REPORT_DRAFT.md`.
+4. (Optional) Run **Test Case 2** to see how your algorithm handles the convoy effect for the "Main Discussion" section of the report.
