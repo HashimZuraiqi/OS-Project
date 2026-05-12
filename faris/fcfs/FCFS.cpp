@@ -40,7 +40,7 @@ void fcfsSchedule(vector<Process>& processes) {
     }
 }
 
-//Print a Gantt Chart (Not required (OPTIONAL) but for better visualization)
+//Print a Gantt Chart ( Not required for the PROJECT (OPTIONAL) but I added it for better visualization )
 void printGanttChart(const vector<Process>& processes) {
     struct Segment {
         string label;
@@ -98,7 +98,7 @@ void printResults(const vector<Process>& processes) {
     cout << "Average Waiting Time    : " << totalWT  / n << " ms\n";
 }
 
-//test case function
+//Test case function
 void runTestCase(int caseNum, const string& description, vector<Process> processes) {
     cout << " Test Case " << caseNum << ": " << description << "\n";
     fcfsSchedule(processes);
@@ -153,7 +153,6 @@ int main() {
     } else {
         cout << "Invalid choice. Please run the program again and either enter 1 or 2 \n";
     }
-
     cout << "End of FCFS Simulation\n";
     return 0;
 }
