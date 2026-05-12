@@ -5,7 +5,6 @@
 
 using namespace std;
 
-// Structure for each process
 struct Process {
     string id;
     int arrivalTime;
@@ -19,7 +18,6 @@ int main() {
 
     vector<Process> processes;
 
-    // Sample processes
   ifstream inputFile("input_processes.txt");
   ofstream outputFile("output.txt");
   ofstream metricsFile("metrics.txt");
@@ -32,7 +30,6 @@ while (inputFile >> p.id >> p.arrivalTime >> p.burstTime) {
 
 inputFile.close();
 
-    // Print processes
     cout << "Processes Entered:\n";
 
     vector<Process> completed;
